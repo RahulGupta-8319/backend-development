@@ -2,18 +2,87 @@ const express = require('express');
 const abc = require('../introduction/intro')
 const router = express.Router();
 
-router.get('/test-me', function (req, res) {
-    console.log('My batch is', abc.name)
-    abc.printName()
-    logger.welcome()
+// router.get('/test-me', function (req, res) {
+//     console.log('My batch is', abc.name)
+//     abc.printName()
+//     // logger.welcome()
 
-    res.send('My second ever api!')
-});
+//     res.send('My second ever api!')
+// });
 
 router.get('/students', function (req, res){
-    let students = ['Sabiha', 'Neha', 'Akash']
+    let students = ['Sabiha', 'Neha', 'Akash','datta']
     res.send(students)
 })
+
+router.get('/movies', function ( req, res){
+    let movies = ['toofan', 'hum-apke-h-kon','dilwale-dulhaniya-le-jayege','jaan']
+    res.send(movies)
+})
+
+router.get('/movies/:indexNumber', function ( req, res){
+    let movies = ['toofan', 'hum-apke-h-kon','dilwale-dulhaniya-le-jayege','jaan']
+    let no = req.params.indexNumber
+    
+
+
+    let len = (movies.length)
+    if(no>=len || no == 0 ){
+        res.send("error")
+    }else {
+        res.send(movies[no])
+    }
+
+})
+
+router.get('/films', function ( req, res){
+   let films = [ {
+   id: 1,
+    name : 'The Shining'
+   }, {
+   id: 2,
+    name : 'Incendies'
+   }, {
+   id: 3,
+    name : 'Rang de Basanti'
+   }, {
+   id: 4,
+    name : 'Finding Nemo'
+   }]
+
+   res.send(films)
+   
+})
+
+router.get('/films/:filmid', function ( req, res){
+    let films = [ {
+    id: 1,
+     name : 'The Shining'
+    }, {
+    id: 2,
+     name : 'Incendies'
+    }, {
+    id: 3,
+     name : 'Rang de Basanti'
+    }, {
+    id: 4,
+     name : 'Finding Nemo'
+    }]
+    
+    let filmid = req.params.filmid
+
+    // const out = films.filter( film => film.id == filmid)
+    // res.send(out)
+    
+      let len = (films.length)
+      if( filmid > len || filmid == 0 || filmid < 0){
+        res.send(" error ")
+      }else{
+        const out = films.filter( film => film.id == filmid)
+        res.send(out)
+      }
+ })
+
 
 router.get('/student-details/:name', function(req, res){
     /*
