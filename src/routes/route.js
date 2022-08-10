@@ -70,4 +70,63 @@ router.post("/test-post-4", function(req, res) {
     res.send(  { msg: arr , status: true }  )
 })
 
+    let players =
+    [
+        {
+            "name": "manish",
+            "dob": "1/1/1995",
+            "gender": "male",
+            "city": "jalandhar",
+            "sports": [
+                "swimming"
+            ]
+        },
+        {
+            "name": "gopal",
+            "dob": "1/09/1995",
+            "gender": "male",
+            "city": "delhi",
+            "sports": [
+                "soccer"
+            ]
+        },
+        {
+            "name": "lokesh",
+            "dob": "1/1/1990",
+            "gender": "male",
+            "city": "mumbai",
+            "sports": [
+                "soccer"
+            ]
+        },
+    ]
+ 
+    router.post('/players', function (req, res) {
+
+        //LOGIC CODE HERE
+       let newplayer = req.body
+       let newplayerName = newplayer.name
+    
+       let flag = false;
+        
+       for (let i = 0; i < players.length; i++) {
+         if(newplayerName == players[i].name){
+            flag = true
+            break
+         }
+        
+       }
+
+       if(flag) {
+        res.send("the player is available")  
+       } else {
+          players.push( newplayer )
+          res.send( players )
+       }
+      
+
+
+    })
+  
+
 module.exports = router;
