@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema( {
     // isIndian: Boolean,
     // parentsInfo: {
     //     motherName: String,
-    //     fatherName: String,
+    //     fatherName: String, 
     //     siblingName: String
     // },
     // cars: [ String  ]
