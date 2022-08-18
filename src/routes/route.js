@@ -30,8 +30,12 @@ router.get("/movies/:indexNumber", function(req, res){
 
 router.get("/shoes", function(req, res){
     let queryParams = req.query
+    
+    console.log(queryParams);
     let brand = queryParams.brand
-    res.send("dummy response")
+    res.send({brand})
+    //red.params when we want to acces dynamic value in this case we have touse rq.pramas
+    //req.query when we want to filter out any item the we use query{ brand color categary}
 })
 
 // uses query params
