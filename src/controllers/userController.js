@@ -1,14 +1,14 @@
 const jwt = require("jsonwebtoken");
 const userModel = require("../models/userModel");
 
-const createUser = async function (abcd, xyz) {
+const createUser = async function (req, res) {
   //You can name the req, res objects anything.
   //but the first parameter is always the request 
   //the second parameter is always the response
-  let data = abcd.body;
+  let data = req.body;
   let savedData = await userModel.create(data);
-  console.log(abcd.newAtribute);
-  xyz.send({ msg: savedData });
+  // console.log(req.newAtribute);
+  res.send({ msg: savedData });
 };
 
 const loginUser = async function (req, res) {
@@ -30,9 +30,7 @@ const loginUser = async function (req, res) {
   // The same secret will be used to decode tokens
   let token = jwt.sign(
     {
-      userId: user._id.toString(),
-      batch: "thorium",
-      organisation: "FUnctionUp",
+      userId: user._id.toString()
     },
     "functionup-thorium"
   );
@@ -41,13 +39,13 @@ const loginUser = async function (req, res) {
 };
 
 const getUserData = async function (req, res) {
-  let token = req.headers["x-Auth-token"];
-  if (!token) token = req.headers["x-auth-token"];
+  let token = req.headers["x-auth-token"];
+  // if (!token) return res.send({status: false, msg: "header is not present" })
 
   //If no token is present in the request header return error
   if (!token) return res.send({ status: false, msg: "token must be present" });
 
-  console.log(token);
+  // console.log(token);
   
   // If a token is present then decode the token with verify function
   // verify takes two inputs:
@@ -55,10 +53,17 @@ const getUserData = async function (req, res) {
   // Input 2 is the same secret with which the token was generated
   // Check the value of the decoded token yourself
   let decodedToken = jwt.verify(token, "functionup-thorium");
+
+
   if (!decodedToken)
     return res.send({ status: false, msg: "token is invalid" });
 
-  let userId = req.params.userId;
+    console.log(decodedToken);
+    let userId = req.params.userId;
+
+//authorization
+    if(decodedToken.userId != userId ) return res.send({status:false , msg:"unauthorized"})
+
   let userDetails = await userModel.findById(userId);
   if (!userDetails)
     return res.send({ status: false, msg: "No such user exists" });
@@ -80,8 +85,8 @@ const updateUser = async function (req, res) {
   }
 
   let userData = req.body;
-  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData);
-  res.send({ status: updatedUser, data: updatedUser });
+  let updatedUser = await userModel.findOneAndUpdate({ _id: userId }, userData, {new:true});
+  res.send({ status: true, data: updatedUser });
 };
 
 const postMessage = async function (req, res) {
@@ -115,8 +120,32 @@ const postMessage = async function (req, res) {
     return res.send({status: true, data: updatedUser})
 }
 
+const deleteUser = async function(req, res){
+
+  let userId = req.params.userId
+
+  let user = await userModel.findById(userId)
+  if(!user) return res.send({status: false , msg: "user is not fount..!!!"})
+
+  let token = req.headers["x-auth-token"]
+  if(!token) return res.send({status: false , msg: "token is not fount..!!!"})
+
+  let varifyToken = jwt.verify(token,"functionup-thorium")
+  if(!varifyToken) return res.send({status: false , msg: "varifivation failed "})
+
+  //authorization
+  if(varifyToken.userId != userId ) return res.send({status:false , msg:"unauthorized person"})
+
+
+  let updateUser = await userModel.findOneAndUpdate({_id:userId}, { $set:{ isDeleted:true}}, {new:true})
+
+  res.send({status:true, msg:updateUser})
+}
+
+
 module.exports.createUser = createUser;
 module.exports.getUserData = getUserData;
 module.exports.updateUser = updateUser;
 module.exports.loginUser = loginUser;
 module.exports.postMessage = postMessage
+module.exports.deleteUser = deleteUser
